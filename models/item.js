@@ -13,7 +13,8 @@ const ItemSchema = new Schema({
     Date: {
         type: String,
         required: true
-    },
-})
+    }
+    }, 	{ timestamps: true }
+)
 
 module.exports = mongoose.model('Item', ItemSchema)

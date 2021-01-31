@@ -1,0 +1,50 @@
+<html>
+    <head>
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+  
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'Day');
+            data.addColumn('number', 'AK-47 | Baroque Purple (Field-Tested)');
+                      
+            // Put this shit in a foreach
+
+            let price;
+            let i = 0
+
+            <% items.forEach(item => { %>
+                price = parseFloat(<%= item.Price %>)
+                //console.log(price)
+                data.addRows([[i,  price]])
+                i = i +1
+            <% }) %>
+        
+
+            var options = {
+                chart: {
+                title: 'Box Office Earnings in First Two Weeks of Opening',
+                subtitle: 'in millions of dollars (USD)'
+                },
+                width: 900,
+                height: 500
+            };
+  
+          var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+  
+          chart.draw(data, options);
+        }
+
+        const refresh = () => {
+            window.location.reload()
+        }
+        setTimeout(refresh, 30000)
+
+      </script>
+    </head>
+    <body>
+      <div id="curve_chart" style="width: 900px; height: 500px"></div>
+    </body>
+  </html>
