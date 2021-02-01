@@ -47,14 +47,14 @@ const get_data = () => {
         
         const item = new Item(body)
 
-        /*item
+        item
             .save()
             .then((result) => {
                 console.log(result)
             })
             .catch((err) => {
                 console.log(err)
-        })*/
+        })
 
         Item.find()
         .then((result) => {
@@ -83,8 +83,7 @@ const get_data = () => {
 const display_price = () => {
     bitskins.getMarketData({
         names: ['AK-47 | Baroque Purple (Field-Tested)']
-    }) .then((res) => {
-        
+    }) .then((res) => {       
         let body = {
             Price: res.data.items[0].lowest_price.toString(),
         }
@@ -93,52 +92,30 @@ const display_price = () => {
 
        PriceNow.find()
         .then((result) => {
-            if(result != null)
-            {
-                const d1 = result[0].createdAt.getTime();
-                const d2 = new Date().getTime();
-                const diff = d2 - d1;
-                const days = diff/(500*60*60*24);
-                console.log("days price" + days)
-                if(days > 1)	{
-                    Item.find( {_id: result[0]._id} )
-                    .remove()
-                    .then((result1) => {
-                        console.log("deleted" + days)
-                        price_db
-                        .save()
-                        .then((result2) => {
-                            console.log(result2)
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })			
-                }
-            }
-            
-            } )
+            result.forEach(element => {
+                const newPrice = res.data.items[0].lowest_price.toString()
+                const id = element._id.toString() 
+                PriceNow.updateOne({ _id: '6017bcbf6a591d1d1c6e532f' }, { Price: newPrice }, function(err, res) {
+                    console.log("Price updated")
+                    setTimeout(display_price, 30000);
+                });               
+            })
+        })
     })
-
-       /* */
-
-        //setTimeout(get_data, 3600000);
 }
 
 get_data()
 
 display_price()
 
-
 app.get('/', (req, res) => {
     Item.find()
-    .sort({ createdAt: -1 })
     .then((result) => {
         //console.log(result)
-        res.render('index', {items: result})
+        PriceNow.find()
+        .then((result1) => {
+            res.render('index', {items: result, price: result1})
+        })
 
     })
     .catch((err) => {
