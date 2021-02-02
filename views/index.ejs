@@ -1,5 +1,25 @@
 <html>
     <head>
+      <style>
+        h1 {
+          font-family: arial;
+        }
+
+        .stats {
+          float: right;  
+          padding: 25px;      
+        }
+
+        .down {
+          font-family: arial;
+          color: red;
+        }
+
+        .up {
+          font-family: arial;
+          color: green;
+        }
+      </style>
       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
       <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
@@ -45,9 +65,21 @@
       </script>
     </head>
     <body>
+      <div class="stats">
+        <h1>
+          Price: <%= price[0].Price %>
+        </h1> 
+        <% if(parseFloat(percentage[0].Percentage) < 0) { %>
+          <h2 class="down">
+            Percentage: <%= percentage[0].Percentage %>
+          </h2>
+        <% }  else { %>
+          <h2 class="up">
+            Percentage: <%= percentage[0].Percentage %>
+          </h2>
+        <% } %>
+      </div>  
       <div id="curve_chart" style="width: 900px; height: 500px"></div>
-      Price: <%= price[0].Price %>
-      <br />
-      Percentage: <%= percentage[0].Percentage %>
+          
     </body>
   </html>

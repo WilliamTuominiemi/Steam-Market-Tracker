@@ -83,7 +83,7 @@ const display_price = () => {
                 const id = element._id.toString() 
                 PriceNow.updateOne({ _id: id }, { Price: newPrice }, function(err, res) {
                     //console.log("Price updated")
-                    setTimeout(display_price, 30000);
+                    setTimeout(display_price, 60000);
                 });               
             })
         })
@@ -144,7 +144,7 @@ const check_value_change = () => {
                     const id = element._id.toString() 
                     Percentage.updateOne({ _id: id }, { Percentage: percentageText }, {upsert: true}, function(err, res) {
                         console.log("Percentage updated")
-                        setTimeout(check_value_change, 30000);
+                        setTimeout(check_value_change, 60000);
                     });               
                 })
             })
