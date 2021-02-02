@@ -9,10 +9,6 @@ const ItemSchema = new Schema({
     Price: {
         type: String,
         required: true
-    },
-    Date: {
-        type: String,
-        required: true
     }
     }, 	{ timestamps: true }
 )

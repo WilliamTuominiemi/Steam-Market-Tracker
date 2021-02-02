@@ -9,6 +9,7 @@ dotenv.config({ path: './config/config.env' })
 
 const Item = require('./models/item')
 const PriceNow = require('./models/price')
+const Percentage = require('./models/percentage')
 
 const app = express()
 
@@ -25,28 +26,13 @@ const get_data = () => {
     bitskins.getMarketData({
         names: ['AK-47 | Baroque Purple (Field-Tested)']
     }) .then((res) => {
-        let d = new Date(),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2) 
-            month = '0' + month;
-        if (day.length < 2) 
-            day = '0' + day;
-
-        let date = [day, month, year].join('-');
-
-        console.log(res.data.items[0])
-
         let body = {
             Name: res.data.items[0].market_hash_name.toString(),
-            Price: res.data.items[0].lowest_price.toString(),
-            Date: date.toString(),
+            Price: res.data.items[0].lowest_price.toString()
         }
         
         const item = new Item(body)
-
+/*
         item
             .save()
             .then((result) => {
@@ -54,7 +40,7 @@ const get_data = () => {
             })
             .catch((err) => {
                 console.log(err)
-        })
+        })*/
 
         Item.find()
         .then((result) => {
@@ -63,7 +49,7 @@ const get_data = () => {
                 const d2 = new Date().getTime();
                 const diff = d2 - d1;
                 const days = diff/(1000*60*60*24);
-                console.log("days" + days)
+                //console.log("days" + days)
                 if(days > 2)	{
                     Item.find( {_id: item_obj._id} )
                     .remove()
@@ -95,8 +81,8 @@ const display_price = () => {
             result.forEach(element => {
                 const newPrice = res.data.items[0].lowest_price.toString()
                 const id = element._id.toString() 
-                PriceNow.updateOne({ _id: '6017bcbf6a591d1d1c6e532f' }, { Price: newPrice }, function(err, res) {
-                    console.log("Price updated")
+                PriceNow.updateOne({ _id: id }, { Price: newPrice }, function(err, res) {
+                    //console.log("Price updated")
                     setTimeout(display_price, 30000);
                 });               
             })
@@ -104,9 +90,74 @@ const display_price = () => {
     })
 }
 
+const calculate_percentage = (priceNow, priceAverage) => {
+    let percentage = ((priceAverage/priceNow)*100 )-100
+    return percentage.toFixed(2)
+}
+
+const check_value_change = () => {
+    PriceNow.find()
+    .then((result) => {
+        Item.find()
+        .then((items) => {
+            let index = 0;
+            let total = 0.00;
+
+            items.forEach(item => {
+                total = total + parseFloat(item.Price)
+                index = index + 1
+                
+            })
+
+            let average = total/index
+            let now = result[0].Price
+            let percentage = calculate_percentage(average, now)
+
+            const percentageText = percentage + "%"
+            /*                  
+            console.log("total ", total, "index ", index)
+            console.log("average " + average)
+            console.log("now " , result[0].Price)
+            console.log("Percentage ", percentage , "%")
+            */
+               
+            /*
+            let body = {
+                Percentage: percentageText,
+            }
+            
+            const percentageDB = new Percentage(body)
+
+            percentageDB
+            .save()
+            .then((result) => {
+                console.log(result)
+            })
+            .catch((err) => {
+                console.log(err)
+            })*/
+
+            Percentage.find()
+            .then((result) => {
+                result.forEach(element => {
+                    const percentageText = percentage + "%"
+                    const id = element._id.toString() 
+                    Percentage.updateOne({ _id: id }, { Percentage: percentageText }, {upsert: true}, function(err, res) {
+                        console.log("Percentage updated")
+                        setTimeout(check_value_change, 30000);
+                    });               
+                })
+            })
+        })
+    })
+}
+
+
 get_data()
 
 display_price()
+
+check_value_change()
 
 app.get('/', (req, res) => {
     Item.find()
@@ -114,7 +165,10 @@ app.get('/', (req, res) => {
         //console.log(result)
         PriceNow.find()
         .then((result1) => {
-            res.render('index', {items: result, price: result1})
+            Percentage.find()
+            .then((result2) => {
+                res.render('index', {items: result, price: result1, percentage: result2})
+            })
         })
 
     })
