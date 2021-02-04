@@ -21,6 +21,8 @@ app.set('view engine', 'ejs')
 
 connectDB()
 
+const checkInterval = 900000
+
 const get_data = () => {
     // Get item price
     bitskins.getMarketData({
@@ -32,7 +34,7 @@ const get_data = () => {
         }
         
         const item = new Item(body)
-/*
+
         item
             .save()
             .then((result) => {
@@ -40,7 +42,7 @@ const get_data = () => {
             })
             .catch((err) => {
                 console.log(err)
-        })*/
+        })
 
         Item.find()
         .then((result) => {
@@ -50,7 +52,7 @@ const get_data = () => {
                 const diff = d2 - d1;
                 const days = diff/(1000*60*60*24);
                 //console.log("days" + days)
-                if(days > 2)	{
+                /*if(days > 2)	{
                     Item.find( {_id: item_obj._id} )
                     .remove()
                     .then((result1) => {
@@ -59,7 +61,7 @@ const get_data = () => {
                     .catch((err) => {
                         console.log(err)
                     })			
-                }
+                }*/
             } )
         })
         setTimeout(get_data, 3600000);
@@ -83,7 +85,7 @@ const display_price = () => {
                 const id = element._id.toString() 
                 PriceNow.updateOne({ _id: id }, { Price: newPrice }, function(err, res) {
                     //console.log("Price updated")
-                    setTimeout(display_price, 60000);
+                    setTimeout(display_price, checkInterval);
                 });               
             })
         })
@@ -144,7 +146,7 @@ const check_value_change = () => {
                     const id = element._id.toString() 
                     Percentage.updateOne({ _id: id }, { Percentage: percentageText }, {upsert: true}, function(err, res) {
                         console.log("Percentage updated")
-                        setTimeout(check_value_change, 60000);
+                        setTimeout(check_value_change, checkInterval);
                     });               
                 })
             })

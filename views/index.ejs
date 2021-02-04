@@ -1,8 +1,13 @@
 <html>
     <head>
       <style>
+        body {
+          background-color: white;
+        }
+
         h1 {
           font-family: arial;
+          color: navy;
         }
 
         .stats {
@@ -44,12 +49,14 @@
         
 
             var options = {
-                chart: {
-                title: 'Box Office Earnings in First Two Weeks of Opening',
-                subtitle: 'in millions of dollars (USD)'
+                title: 'AK-47 | Baroque Purple (Field-Tested)',
+                subtitle: 'Price over a period of time',
+                backgroundColor: {
+                  fill: 'white',
+                  fillOpacity: 1
                 },
                 width: 900,
-                height: 500
+                height: 900
             };
   
           var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
@@ -60,14 +67,14 @@
         const refresh = () => {
             window.location.reload()
         }
-        setTimeout(refresh, 30000)
+        setTimeout(refresh, 900000)
 
       </script>
     </head>
     <body>
       <div class="stats">
         <h1>
-          Price: <%= price[0].Price %>
+          Price: <%= price[0].Price %> €
         </h1> 
         <% if(parseFloat(percentage[0].Percentage) < 0) { %>
           <h2 class="down">
