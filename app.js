@@ -1,6 +1,3 @@
-const BitSkins = require('bitskins-api');
-const bitskins = new BitSkins("80e4a51c-91a9-4160-ad8b-4d081e146f5b", "GP3JZ7NBAKDGKF7X");
-
 const dotenv = require('dotenv')
 const express = require('express')
 
@@ -18,6 +15,9 @@ const PORT1 = process.env.PORT || 3000
 const bodyParser = require('body-parser')
 
 app.set('view engine', 'ejs')
+
+const BitSkins = require('bitskins-api');
+const bitskins = new BitSkins(process.env.BITSKINS_KEY, process.env.BITSKINS_SECRET);
 
 connectDB()
 
@@ -48,6 +48,7 @@ const get_data = () => {
         Item.find()
         .then((result) => {
             result.forEach(item_obj =>{
+                // Check if document over two days old, if so, delete it
                 const d1 = item_obj.createdAt.getTime();
                 const d2 = new Date().getTime();
                 const diff = d2 - d1;
@@ -65,7 +66,7 @@ const get_data = () => {
                 }*/
             })
         }) 
-        setTimeout(get_data, 3600000);
+        setTimeout(get_data, checkInterval);
     })
 }
 
