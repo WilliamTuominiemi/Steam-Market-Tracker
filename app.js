@@ -27,12 +27,13 @@ const get_data = () => {
     // Get item price
     bitskins.getMarketData({
         names: ['AK-47 | Baroque Purple (Field-Tested)']
-    }) .then((res) => {
+    }) 
+    .then((res) => {
         let body = {
             Name: res.data.items[0].market_hash_name.toString(),
             Price: res.data.items[0].lowest_price.toString()
         }
-        
+            
         const item = new Item(body)
 
         item
@@ -62,23 +63,22 @@ const get_data = () => {
                         console.log(err)
                     })			
                 }*/
-            } )
-        })
+            })
+        }) 
         setTimeout(get_data, 3600000);
     })
 }
 
 const display_price = () => {
-    bitskins.getMarketData({
-        names: ['AK-47 | Baroque Purple (Field-Tested)']
-    }) .then((res) => {       
+    bitskins.getMarketData({ names: ['AK-47 | Baroque Purple (Field-Tested)'] }) 
+    .then((res) => {       
         let body = {
             Price: res.data.items[0].lowest_price.toString(),
         }
 
         const price_db = new PriceNow(body)
 
-       PriceNow.find()
+        PriceNow.find()
         .then((result) => {
             result.forEach(element => {
                 const newPrice = res.data.items[0].lowest_price.toString()
@@ -116,28 +116,6 @@ const check_value_change = () => {
             let percentage = calculate_percentage(average, now)
 
             const percentageText = percentage + "%"
-            /*                  
-            console.log("total ", total, "index ", index)
-            console.log("average " + average)
-            console.log("now " , result[0].Price)
-            console.log("Percentage ", percentage , "%")
-            */
-               
-            /*
-            let body = {
-                Percentage: percentageText,
-            }
-            
-            const percentageDB = new Percentage(body)
-
-            percentageDB
-            .save()
-            .then((result) => {
-                console.log(result)
-            })
-            .catch((err) => {
-                console.log(err)
-            })*/
 
             Percentage.find()
             .then((result) => {
@@ -164,7 +142,6 @@ check_value_change()
 app.get('/', (req, res) => {
     Item.find()
     .then((result) => {
-        //console.log(result)
         PriceNow.find()
         .then((result1) => {
             Percentage.find()
