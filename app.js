@@ -19,21 +19,26 @@ app.set('view engine', 'ejs')
 const BitSkins = require('bitskins-api');
 const bitskins = new BitSkins(process.env.BITSKINS_KEY, process.env.BITSKINS_SECRET);
 
+// Connect to the DB
 connectDB()
 
+// Define the interval at which the data is checked
 const checkInterval = 900000
 
+// Retrieve data from the BitSkins API
 const get_data = () => {
     // Get item price
     bitskins.getMarketData({
         names: ['AK-47 | Baroque Purple (Field-Tested)']
     }) 
     .then((res) => {
+        // Save retrieved data on the DB
+
         let body = {
             Name: res.data.items[0].market_hash_name.toString(),
             Price: res.data.items[0].lowest_price.toString()
-        }
-            
+        }  
+
         const item = new Item(body)
 
         item
@@ -45,10 +50,10 @@ const get_data = () => {
                 console.log(err)
         })
 
+        // Check if document over two days old, if so, delete it
         Item.find()
         .then((result) => {
-            result.forEach(item_obj =>{
-                // Check if document over two days old, if so, delete it
+            result.forEach(item_obj =>{    
                 const d1 = item_obj.createdAt.getTime();
                 const d2 = new Date().getTime();
                 const diff = d2 - d1;
@@ -66,10 +71,11 @@ const get_data = () => {
                 }*/
             })
         }) 
-        setTimeout(get_data, checkInterval);
+        setTimeout(get_data, checkInterval); // This reruns the code in specified intervals
     })
 }
 
+// Retrieve data from the BitSkins API to save the current price
 const display_price = () => {
     bitskins.getMarketData({ names: ['AK-47 | Baroque Purple (Field-Tested)'] }) 
     .then((res) => {       
@@ -78,6 +84,16 @@ const display_price = () => {
         }
 
         const price_db = new PriceNow(body)
+
+        // This code may need to be ran once, after that comment it out
+        /* price_db
+            .save()
+            .then((result) => {
+                console.log(result)
+            })
+            .catch((err) => {
+                console.log(err)
+        }) */
 
         PriceNow.find()
         .then((result) => {
@@ -93,11 +109,14 @@ const display_price = () => {
     })
 }
 
+// Calculate how much the current price has fluctuated from the 2 day average
+// To detect crashes or skyrockets
 const calculate_percentage = (priceNow, priceAverage) => {
     let percentage = ((priceAverage/priceNow)*100 )-100
     return percentage.toFixed(2)
 }
 
+// Checks how much the value has changed
 const check_value_change = () => {
     PriceNow.find()
     .then((result) => {
@@ -106,18 +125,22 @@ const check_value_change = () => {
             let index = 0;
             let total = 0.00;
 
+            // For each document find add one to index and add price to total
             items.forEach(item => {
                 total = total + parseFloat(item.Price)
-                index = index + 1
-                
+                index = index + 1       
             })
 
+            // With data, calculate average
             let average = total/index
             let now = result[0].Price
+
+            // With data, calculate fluctuation
             let percentage = calculate_percentage(average, now)
 
             const percentageText = percentage + "%"
 
+            // Update percentage fluctuation on DB
             Percentage.find()
             .then((result) => {
                 result.forEach(element => {
@@ -141,6 +164,7 @@ display_price()
 check_value_change()
 
 app.get('/', (req, res) => {
+    // Gather all neccessary data from DB and render it
     Item.find()
     .then((result) => {
         PriceNow.find()
