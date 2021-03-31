@@ -25,29 +25,34 @@
           color: green;
         }
       </style>
+
+      <!-- Import Google Charts API -->
       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
       <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
   
+        // Draw the chart
         function drawChart() {
             var data = new google.visualization.DataTable();
+
+            // Define the columms
             data.addColumn('number', 'Day');
             data.addColumn('number', 'AK-47 | Baroque Purple (Field-Tested)');
                       
-            // Put this shit in a foreach
-
+            // Put data shit in a foreach
             let price;
             let i = 0
 
             <% items.forEach(item => { %>
+                // For each item document, a dot is added to the line
                 price = parseFloat(<%= item.Price %>)
-                //console.log(price)
                 data.addRows([[i,  price]])
                 i = i +1
             <% }) %>
         
-
+            // Define the chart and give information
             var options = {
                 title: 'AK-47 | Baroque Purple (Field-Tested)',
                 subtitle: 'Price over a period of time',
@@ -59,11 +64,12 @@
                 height: 900
             };
   
+          // Set up chart as a curve chart and draw it
           var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-  
           chart.draw(data, options);
         }
-
+        
+        // Refresh the page every once in a while
         const refresh = () => {
             window.location.reload()
         }
@@ -72,6 +78,7 @@
       </script>
     </head>
     <body>
+      <!-- Information about price and price change -->
       <div class="stats">
         <h1>
           Price: <%= price[0].Price %> €
