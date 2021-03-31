@@ -34,8 +34,8 @@
         google.charts.setOnLoadCallback(drawChart);
   
         // Draw the chart
-        function drawChart() {
-            var data = new google.visualization.DataTable();
+        const drawChart = () => {
+            let data = new google.visualization.DataTable();
 
             // Define the columms
             data.addColumn('number', 'Day');
@@ -53,7 +53,7 @@
             <% }) %>
         
             // Define the chart and give information
-            var options = {
+            let options = {
                 title: 'AK-47 | Baroque Purple (Field-Tested)',
                 subtitle: 'Price over a period of time',
                 backgroundColor: {
@@ -65,7 +65,7 @@
             };
   
           // Set up chart as a curve chart and draw it
-          var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+          let chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
           chart.draw(data, options);
         }
         

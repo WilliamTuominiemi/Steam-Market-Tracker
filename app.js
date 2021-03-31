@@ -100,7 +100,7 @@ const display_price = () => {
             result.forEach(element => {
                 const newPrice = res.data.items[0].lowest_price.toString()
                 const id = element._id.toString() 
-                PriceNow.updateOne({ _id: id }, { Price: newPrice }, function(err, res) {
+                PriceNow.updateOne({ _id: id }, { Price: newPrice }, (err, res) => {
                     //console.log("Price updated")
                     setTimeout(display_price, checkInterval);
                 });               
@@ -146,7 +146,7 @@ const check_value_change = () => {
                 result.forEach(element => {
                     const percentageText = percentage + "%"
                     const id = element._id.toString() 
-                    Percentage.updateOne({ _id: id }, { Percentage: percentageText }, {upsert: true}, function(err, res) {
+                    Percentage.updateOne({ _id: id }, { Percentage: percentageText }, {upsert: true}, (err, res) => {
                         console.log("Percentage updated")
                         setTimeout(check_value_change, checkInterval);
                     });               
