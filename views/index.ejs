@@ -4,22 +4,18 @@
         body {
           background-color: white;
         }
-
         h1 {
           font-family: arial;
           color: navy;
         }
-
         .stats {
           float: right;  
           padding: 25px;      
         }
-
         .down {
           font-family: arial;
           color: red;
         }
-
         .up {
           font-family: arial;
           color: green;
@@ -34,9 +30,8 @@
         google.charts.setOnLoadCallback(drawChart);
   
         // Draw the chart
-        const drawChart = () => {
-            let data = new google.visualization.DataTable();
-
+        function drawChart() {
+            var data = new google.visualization.DataTable();
             // Define the columms
             data.addColumn('number', 'Day');
             data.addColumn('number', 'AK-47 | Baroque Purple (Field-Tested)');
@@ -44,7 +39,6 @@
             // Put data shit in a foreach
             let price;
             let i = 0
-
             <% items.forEach(item => { %>
                 // For each item document, a dot is added to the line
                 price = parseFloat(<%= item.Price %>)
@@ -53,7 +47,7 @@
             <% }) %>
         
             // Define the chart and give information
-            let options = {
+            var options = {
                 title: 'AK-47 | Baroque Purple (Field-Tested)',
                 subtitle: 'Price over a period of time',
                 backgroundColor: {
@@ -65,7 +59,7 @@
             };
   
           // Set up chart as a curve chart and draw it
-          let chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+          var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
           chart.draw(data, options);
         }
         
@@ -74,7 +68,6 @@
             window.location.reload()
         }
         setTimeout(refresh, 900000)
-
       </script>
     </head>
     <body>
